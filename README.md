@@ -1,6 +1,6 @@
 # qhfz
 
-A test for QFC font display and word-for-word manipulation
+A test for QCF font display and word-for-word manipulation
 - used glyphs from quran.com api
 - used woff2 font from quran.com next.js fonts folder
 
