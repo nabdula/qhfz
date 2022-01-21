@@ -29,19 +29,31 @@
       background-color: #fffbf6;
       text-align: center;
       /* -webkit-touch-callout: none !important;  */
-      -webkit-user-select: none !important;
+      /* -webkit-user-select: none !important; */
     }
 
-    .ayaWord::before {
+
+    .ayaWordHighlightedHidden::before  {
       background: #e1ceb4;
       content: "";
       display: block;
       height: 2px;
       position: relative;
-      transform: translateY(22px);
+      transform: translateY(20px);
+      transition: background .90s;
+      z-index: -1;
+      border-radius: 3px;
+    }
+    .ayaWordHidden::before  {
+      background: #e1ceb4;
+      content: "";
+      display: block;
+      height: 2px;
+      position: relative;
+      transform: translateY(20px);
       transition: background .40s;
       z-index: -1;
-      border-radius: 4px;
+      border-radius: 3px;
     }
 
     .ayaWord {
@@ -54,6 +66,30 @@
 
     .ayaWordHighlighted {
       background: antiquewhite;
+      /* color: rgba(0, 26, 46, 0); */
+      /* make aya text transparent */
+    }
+    .ayaWordHighlighted::before  {
+      background: #e1ceb4;
+      content: "";
+      display: block;
+      height: 0px;
+      position: relative;
+      transform: translateY(20px);
+      transition: background 1.40s;
+      z-index: -1;
+      border-radius: 3px;
+    }
+    .ayaWordHighlightedHidden {
+      background: rgba(250, 235, 215, 0);
+      color: rgba(0, 26, 46, 0);
+
+      /* color: rgba(0, 26, 46, 0); */
+      /* make aya text transparent */
+    }
+
+    .ayaWordHidden {
+      /* background: antiquewhite; */
       color: rgba(0, 26, 46, 0);
       /* make aya text transparent */
     }
@@ -85,6 +121,14 @@
       display: inline-block;
       position: relative;
       transition: color 1.2s cubic-bezier(.25, 1.1, .11, 1.1), background 0.5s
+    }
+
+    .icon {
+      width: 24px;
+      margin: 7px;
+      margin-right: 24px;
+      filter: brightness(0.9) invert(.7) sepia(.5) hue-rotate(0deg) saturate(200%);
+      opacity: 0.8;
     }
   </style>
 
@@ -138,7 +182,7 @@
     <section class="py-5 text-center container">
       <div class="row py-lg-5">
         <div class="col-lg-6 col-md-8 mx-auto">
-          <p class="clickable" id="output" style="font-family: qcf; font-size: 1.4rem;">
+          <p id="output" style="font-family: qcf; font-size: 1.4rem;">
 
           </p>
         </div>
@@ -147,11 +191,23 @@
   </main>
 
 
-  <footer class="text-muted py-5 fixed-bottom">
+  <footer class="bg-dark fixed-bottom" style="opacity: 0.9;">
     <div class="container">
-      <p class="float-end mb-1">
-        999
-      </p>
+      <div class="row" style="padding-bottom: 4px; padding-top: 2px;">
+        <div class="col-sm-2" style="display: flex; justify-content: flex-start;">
+          <span style="color: antiquewhite; opacity: 0.8; margin: 7px;">99999</span>
+        </div>
+        <div class="col-sm-5" style="display: flex; justify-content: flex-end;">
+          <span><img class="icon" src='icon_difficulty_hard.png'></span>
+          <span><img class="icon" src='icon_difficulty_medium.png'></span>
+          <span><img class="icon" src='icon_difficulty_easy.png'></span>
+        </div>
+        <div class="col-sm-5" style="display: flex; justify-content: flex-end;">
+          <span onclick="hideAllAyaWords();"><img class="icon" src='icon_hide_all.png'></span>
+          <span onclick="showAllAyaWords();"><img class="icon" src='icon_show_all.png'></span>
+          <span onclick="showFirstAyaWords();"><img class="icon" src='icon_show_firsts.png'></span>
+        </div>
+      </div>
     </div>
   </footer>
 

@@ -51,19 +51,37 @@ for (var i = 0; i < response.verses.length; i++) {
   var aya = response.verses[i]["code_v2"];
   output.innerHTML += `<div><p>`;
   for (var n = 0; n < aya.length; n++) {
+    // var newSpan = document.createElement("span");
+    var data_first_word = false;
+    if (n == 0) {
+      data_first_word = true;
+    }
+
     var glyph = aya[n];
+
     if (glyph == " ") {
       // space between glyphs in aya
+      // newSpan.innerHTML = `&nbsp`;
+      // newSpan.className = "ayaSpace";
       output.innerHTML += `<span class="ayaSpace">&nbsp;</span>`;
+      // output.appendChild(newSpan);
     } else if (glyph !== " " && n < aya.length - 1) {
       // aya regular glyph
-      output.innerHTML += `<span class="ayaWord" ondblclick="event.preventDefault();selectRange(this)"; oncontextmenu="event.preventDefault();highlightAyaWord(this);">${aya[n]}</span>`;
+      // newSpan.innerText = aya[n];
+      // newSpan.className = "ayaWord";
+      // newSpan.ondblclick = "event.preventDefault();selectRange(this);";
+      // newSpan.oncontextmenu = "event.preventDefault();highlightAyaWord(this);";
+      output.innerHTML += `<span class="ayaWord" data-first-word="${data_first_word}" ondblclick="event.preventDefault();selectRange(this)"; oncontextmenu="event.preventDefault();highlightAyaWord(this);">${aya[n]}</span>`;
+      // output.appendChild(newSpan);
     } else if (glyph !== " " && n == aya.length - 1) {
       // aya number glyph (aya sign), (last glyph)
+      // newSpan.innerText = aya[n];
+      // newSpan.className = "ayaSign";
       output.innerHTML += `<span class="ayaSign">${aya[n]}</span>`;
+      // output.appendChild(newSpan);
     }
   }
-  output.innerHTML += `</div>`;
+  output.innerHTML += `</p></div>`;
 }
 
 function highlightAyaWord(el) {
@@ -71,6 +89,115 @@ function highlightAyaWord(el) {
     el.className = "ayaWord ayaWordHighlighted";
   } else {
     el.className = "ayaWord";
+  }
+}
+
+var clickingHide = 1;
+var clickingFirsts = 1;
+function showAllAyaWords() {
+  clickingHide = 1; // reset hide button to as first time
+  clickingFirsts = 1; // reset show firsts button to as first time
+  //this also restores the highlights
+  var ayaWords = document.getElementsByClassName("ayaWord");
+  for (var a = 0; a < ayaWords.length; a++) {
+    if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+      ayaWords[a].className = "ayaWord ayaWordHighlighted";
+    } else if (!ayaWords[a].className.includes("ayaWordHighlighted")) {
+      ayaWords[a].className = "ayaWord";
+    }
+  }
+}
+
+function hideAllAyaWords() {
+  clickingFirsts = 1; // reset show firsts button to as first time
+
+  var ayaWords = document.getElementsByClassName("ayaWord");
+  // first click hides but keeps highlighted words and their highlight visible
+  if (clickingHide == 1) {
+    clickingHide = 2;
+    for (var a = 0; a < ayaWords.length; a++) {
+      if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+        ayaWords[a].className = "ayaWord ayaWordHighlighted";
+        // do not hide highlighted words
+        //
+      } else if (!ayaWords[a].className.includes("ayaWordHighlighted")) {
+        ayaWords[a].className = "ayaWord ayaWordHidden";
+      }
+    }
+    // second click hides highlighted words but keeps the highlight visible
+  } else if (clickingHide == 2) {
+    clickingHide = 3;
+    for (var a = 0; a < ayaWords.length; a++) {
+      if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+        ayaWords[a].className = "ayaWord ayaWordHighlighted ayaWordHidden";
+      } else if (!ayaWords[a].className.includes("ayaWordHighlighted")) {
+        ayaWords[a].className = "ayaWord ayaWordHidden";
+      }
+    }
+    // third click hides even the highlight ayaWordHighlightedHidden
+  } else if (clickingHide == 3) {
+    clickingHide = 4;
+    for (var a = 0; a < ayaWords.length; a++) {
+      if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+        ayaWords[a].className = ayaWords[a].className.replace("ayaWordHighlighted", "ayaWordHighlightedHidden");
+      }
+    }
+    // forth click on hide button works like the show all button
+  } else if (clickingHide == 4) {
+    clickingHide = 1;
+    showAllAyaWords();
+  }
+}
+
+function showFirstAyaWords() {
+  clickingHide = 1; // reset hide button to as first time
+  var ayaWords = document.getElementsByClassName("ayaWord");
+  // keeps first words, first click hides all except highlighted words and their highlight
+  if (clickingFirsts == 1) {
+    clickingFirsts = 2;
+    for (var a = 0; a < ayaWords.length; a++) {
+      if (ayaWords[a].dataset.firstWord == "true") {
+        // do not touch first words
+      } else if (ayaWords[a].dataset.firstWord == "false") {
+        if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+          // do not hide highlighted words on first click
+          //
+        } else if (!ayaWords[a].className.includes("ayaWordHighlighted")) {
+          ayaWords[a].className = "ayaWord ayaWordHidden";
+        }
+      }
+    }
+    // keeps first words, second click hides highlighted words but keeps the highlight visible
+  } else if (clickingFirsts == 2) {
+    clickingFirsts = 3;
+    for (var a = 0; a < ayaWords.length; a++) {
+      if (ayaWords[a].dataset.firstWord == "true") {
+        // do not touch first words
+      } else if (ayaWords[a].dataset.firstWord == "false") {
+        if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+          ayaWords[a].className = "ayaWord ayaWordHighlighted ayaWordHidden";
+        } else if (!ayaWords[a].className.includes("ayaWordHighlighted")) {
+          ayaWords[a].className = "ayaWord ayaWordHidden";
+        }
+      }
+    }
+    // keeps first words, hides highlighted words and their highlight
+  } else if (clickingFirsts == 3) {
+    clickingFirsts = 4;
+    for (var a = 0; a < ayaWords.length; a++) {
+      if (ayaWords[a].dataset.firstWord == "true") {
+        // do not touch first words
+      } else if (ayaWords[a].dataset.firstWord == "false") {
+        if (ayaWords[a].className.includes("ayaWordHighlighted")) {
+          ayaWords[a].className = ayaWords[a].className.replace("ayaWordHighlighted", "ayaWordHighlightedHidden");
+        } else if (!ayaWords[a].className.includes("ayaWordHighlighted")) {
+          ayaWords[a].className = "ayaWord ayaWordHidden";
+        }
+      }
+    }
+  } else if (clickingFirsts == 4) {
+    clickingFirsts = 1;
+    showAllAyaWords();
   }
 }
 
@@ -88,54 +215,6 @@ function selectRange(el) {
     range.select();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // // // url breakdown by its params
 // // var url = new URL(location);
@@ -169,8 +248,6 @@ function selectRange(el) {
 //   mongoQuery = { jozz: urlUsefulParam };
 // }
 
-
-
 // mfind("ayas", mongoQuery).then((gottenAyas) => {
 //   gottenAyas.sort((a, b) => a.qid - b.qid); //sort by aya quran id (qid)
 //   var groupedSuras = groupIntoArrays(gottenAyas, "sura_no"); //group ayas into their sura
@@ -190,11 +267,9 @@ function selectRange(el) {
 //   }
 // });
 
-
 // function groupIntoArrays(array, key) {
 //   return Array.from(array.reduce((m, o) => m.set(o[key], [...(m.get(o[key]) || []), o]), new Map()).values());
 // }
-
 
 // $(".clickable").on('click touchstart', function () {
 //   s = window.getSelection();
